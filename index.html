@@ -57,9 +57,9 @@
             <span>Welcome to Daily Mart! Free delivery on orders over ৳500! Use code: DAILY10</span>
         </div>
         <div class="flex items-center gap-4 text-white">
-            <div id="authStatusHeader" class="hidden items-center gap-2">
-                <i class="fa-solid fa-user-circle text-brand-gold"></i>
-                <span id="userNameDisplay" class="font-medium">Guest</span>
+            <div id="authStatusHeader" class="hidden items-center gap-2 cursor-pointer hover:text-brand-gold transition" onclick="openProfileModal()">
+                <img id="headerUserAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" class="w-6 h-6 rounded-full object-cover border border-brand-gold">
+                <span id="userNameDisplay" class="font-medium text-xs">Guest</span>
             </div>
         </div>
     </div>
@@ -128,13 +128,8 @@
 
         <!-- Main Store Content -->
         <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
-            
-            <!-- Promotional Banner (Synced from Seller Portal) -->
-            <div id="offerBannerContainer" class="mb-8">
-                <!-- Dynamically injected active offer banner -->
-            </div>
+            <div id="offerBannerContainer" class="mb-8"></div>
 
-            <!-- Category Header -->
             <div class="flex items-center justify-between mb-6">
                 <h2 id="currentCategoryTitle" class="text-xl font-bold text-slate-900 flex items-center gap-2">
                     <i class="fa-solid fa-store text-brand-forest"></i> All Available Products
@@ -142,12 +137,8 @@
                 <div class="text-sm text-slate-500"><span id="productCountBadge">0</span> items found</div>
             </div>
 
-            <!-- Product Grid -->
-            <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                <!-- Products injected via JS -->
-            </div>
+            <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
             
-            <!-- Empty State -->
             <div id="emptyProductState" class="hidden text-center py-16">
                 <div class="w-20 h-20 bg-slate-200 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
                     <i class="fa-solid fa-box-open"></i>
@@ -163,7 +154,6 @@
         <div class="absolute inset-0 bg-black/50 transition-opacity" onclick="toggleCartDrawer(false)"></div>
         <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
             <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between animate-fade-in">
-                <!-- Header -->
                 <div class="p-4 bg-brand-forest text-white flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-cart-shopping text-brand-gold"></i>
@@ -173,11 +163,7 @@
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
-                <!-- Cart Items -->
-                <div id="cartDrawerItems" class="flex-grow overflow-y-auto p-4 space-y-4 divide-y divide-slate-100">
-                    <!-- Dynamic Cart Items -->
-                </div>
-                <!-- Footer & Checkout -->
+                <div id="cartDrawerItems" class="flex-grow overflow-y-auto p-4 space-y-4 divide-y divide-slate-100"></div>
                 <div class="p-4 bg-slate-50 border-t border-slate-200 space-y-3">
                     <div class="flex justify-between text-sm">
                         <span class="text-slate-600">Subtotal</span>
@@ -248,25 +234,139 @@
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
-            <div id="customerOrderHistoryList" class="space-y-4">
-                <!-- Injected order history & status tracker -->
+            <div id="customerOrderHistoryList" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <!-- AUTHENTICATION / LOGIN / SIGNUP MODAL -->
+    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in">
+            <div class="flex justify-between items-center mb-4 border-b pb-3">
+                <h3 id="authModalTitle" class="font-bold text-lg text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-user-lock text-brand-forest"></i> Login to Daily Mart
+                </h3>
+                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Google Login Button -->
+            <button onclick="handleGoogleLogin()" class="w-full border border-slate-300 hover:bg-slate-50 py-3 px-4 rounded-xl font-semibold text-slate-700 flex items-center justify-center gap-3 transition shadow-sm mb-4">
+                <i class="fa-brands fa-google text-red-500 text-lg"></i> Continue with Google
+            </button>
+
+            <div class="relative flex py-2 items-center">
+                <div class="flex-grow border-t border-slate-200"></div>
+                <span class="flex-shrink mx-4 text-xs text-slate-400 uppercase">Or use email</span>
+                <div class="flex-grow border-t border-slate-200"></div>
+            </div>
+
+            <!-- Step 1: Login Form -->
+            <form id="loginFormContainer" onsubmit="handleLoginSubmit(event)" class="space-y-3 mt-2">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Email Address</label>
+                    <input type="email" id="loginEmail" required placeholder="your@email.com" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
+                </div>
+                <button type="submit" class="w-full bg-brand-forest text-white py-2.5 rounded-xl font-bold hover:bg-brand-dark transition shadow text-sm">
+                    Login
+                </button>
+                <div class="text-center pt-2">
+                    <button type="button" onclick="switchAuthMode('signup')" class="text-xs text-brand-forest font-semibold hover:underline">
+                        Don't have an account? Sign Up here
+                    </button>
+                </div>
+            </form>
+
+            <!-- Step 2: Signup Form (Email & OTP & Password) -->
+            <div id="signupContainer" class="hidden space-y-3 mt-2">
+                <!-- Step 2A: Email Input -->
+                <div id="signupStepEmail" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Enter Your Email for OTP</label>
+                        <input type="email" id="signupEmailInput" required placeholder="your@email.com" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
+                    </div>
+                    <button type="button" onclick="sendOtp()" class="w-full bg-brand-forest text-white py-2.5 rounded-xl font-bold hover:bg-brand-dark transition shadow text-sm">
+                        Send OTP
+                    </button>
+                </div>
+
+                <!-- Step 2B: OTP Verification & Password -->
+                <div id="signupStepOtp" class="space-y-3 hidden">
+                    <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-lg text-xs text-amber-800">
+                        OTP sent to your email! (Demo OTP is shown in alert).
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Enter 4-digit OTP</label>
+                        <input type="text" id="signupOtpInput" required placeholder="1234" maxlength="4" class="w-full border rounded-lg p-2.5 text-sm tracking-widest font-bold text-center focus:ring-2 focus:ring-brand-forest">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Create Password</label>
+                        <input type="password" id="signupPasswordInput" required placeholder="••••••••" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
+                    </div>
+                    <button type="button" onclick="verifyOtpAndRegister()" class="w-full bg-brand-gold text-brand-dark py-2.5 rounded-xl font-bold hover:bg-amber-400 transition shadow text-sm">
+                        Verify & Create Account
+                    </button>
+                </div>
+
+                <div class="text-center pt-2">
+                    <button type="button" onclick="switchAuthMode('login')" class="text-xs text-brand-forest font-semibold hover:underline">
+                        Already have an account? Login here
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- GOOGLE LOGIN MODAL -->
-    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in text-center">
-            <div class="w-14 h-14 bg-brand-forest text-brand-gold rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow">
-                <i class="fa-solid fa-user-shield"></i>
+    <!-- USER PROFILE SECTION MODAL -->
+    <div id="profileModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 border-b pb-3">
+                <h3 class="font-bold text-lg text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear text-brand-forest"></i> User Profile Settings
+                </h3>
+                <button onclick="closeProfileModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
             </div>
-            <h3 class="font-bold text-xl text-slate-900 mb-1">Welcome to Daily Mart</h3>
-            <p class="text-xs text-slate-500 mb-6">Login or Signup securely using your Google account to manage cart, orders, and rewards.</p>
-            
-            <button onclick="simulateGoogleLogin()" class="w-full border border-slate-300 hover:bg-slate-50 py-3 px-4 rounded-xl font-semibold text-slate-700 flex items-center justify-center gap-3 transition shadow-sm mb-4">
-                <i class="fa-brands fa-google text-red-500 text-lg"></i> Continue with Google
-            </button>
-            <div class="text-xs text-slate-400">By continuing, you agree to Daily Mart's Terms of Service & Privacy Policy.</div>
+            <form id="profileForm" onsubmit="handleUpdateProfile(event)" class="space-y-3">
+                <div class="text-center mb-4">
+                    <img id="profileAvatarPreview" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200" class="w-20 h-20 rounded-full object-cover mx-auto border-2 border-brand-gold shadow">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Profile Picture URL</label>
+                    <input type="url" id="profileAvatar" placeholder="https://images.unsplash.com/photo-..." class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name</label>
+                    <input type="text" id="profileName" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Email Address (Can change)</label>
+                    <input type="email" id="profileEmail" required class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Phone Number</label>
+                    <input type="tel" id="profilePhone" placeholder="017xxxxxxxx" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Delivery Address</label>
+                    <textarea id="profileAddress" rows="2" placeholder="House, Road, Area, City" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">New Password (Leave blank to keep current)</label>
+                    <input type="password" id="profilePassword" placeholder="••••••••" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
+                </div>
+                <button type="submit" class="w-full bg-brand-forest text-white py-3 rounded-xl font-bold hover:bg-brand-dark transition shadow text-sm">
+                    Save Changes
+                </button>
+                <button type="button" onclick="handleLogout()" class="w-full bg-red-100 text-red-600 py-2.5 rounded-xl font-bold hover:bg-red-200 transition text-xs mt-2">
+                    Logout
+                </button>
+            </form>
         </div>
     </div>
 
@@ -322,10 +422,13 @@
         let offers = JSON.parse(localStorage.getItem('dailymart_offers')) || defaultOffers;
         let cart = JSON.parse(localStorage.getItem('dailymart_cart')) || [];
         let orders = JSON.parse(localStorage.getItem('dailymart_orders')) || [];
+        let usersDB = JSON.parse(localStorage.getItem('dailymart_users_db')) || [];
         let currentUser = JSON.parse(localStorage.getItem('dailymart_user')) || null;
         
         let selectedCategory = 'All';
         let searchQuery = '';
+        let generatedOtp = '';
+        let tempSignupEmail = '';
 
         window.addEventListener('DOMContentLoaded', () => {
             renderStorefront();
@@ -333,7 +436,6 @@
             updateAuthUI();
         });
 
-        // Listen for live updates from Seller Portal
         window.addEventListener('storage', (e) => {
             if (e.key === 'dailymart_products' || e.key === 'dailymart_offers' || e.key === 'dailymart_orders') {
                 products = JSON.parse(localStorage.getItem('dailymart_products')) || defaultProducts;
@@ -347,6 +449,7 @@
             localStorage.setItem('dailymart_cart', JSON.stringify(cart));
             localStorage.setItem('dailymart_orders', JSON.stringify(orders));
             localStorage.setItem('dailymart_user', JSON.stringify(currentUser));
+            localStorage.setItem('dailymart_users_db', JSON.stringify(usersDB));
         }
 
         function filterCategory(category) {
@@ -423,4 +526,393 @@
                             <h3 class="font-bold text-slate-800 text-sm line-clamp-1">${p.name}</h3>
                             <p class="text-xs text-slate-500 line-clamp-1 mt-0.5">${p.description || ''}</p>
                         </div>
-                        <div class="mt-4 flex items
+                        <div class="mt-4 flex items-center justify-between">
+                            <div>
+                                <span class="text-sm font-extrabold text-slate-900">৳${p.price}</span>
+                                <span class="text-[10px] text-slate-400 block">Stock: ${p.stock}</span>
+                            </div>
+                            <button onclick="addToCart('${p.id}')" class="bg-brand-forest hover:bg-brand-dark text-white p-2.5 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1">
+                                <i class="fa-solid fa-cart-plus"></i> <span class="hidden sm:inline">Add</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                if (existingItem.qty < product.stock) {
+                    existingItem.qty++;
+                } else {
+                    alert('Maximum available stock reached.');
+                    return;
+                }
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            saveData();
+            updateCartUI();
+            toggleCartDrawer(true);
+        }
+
+        function updateCartQty(productId, delta) {
+            const item = cart.find(i => i.id === productId);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) {
+                cart = cart.filter(i => i.id !== productId);
+            }
+            saveData();
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartItemCount').innerText = totalCount;
+
+            const container = document.getElementById('cartDrawerItems');
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-slate-400">
+                        <i class="fa-solid fa-cart-shopping text-4xl mb-2"></i>
+                        <p class="text-sm">Your cart is empty.</p>
+                    </div>
+                `;
+                document.getElementById('cartSubtotal').innerText = '৳0';
+                document.getElementById('cartGrandTotal').innerText = '৳60';
+                return;
+            }
+
+            container.innerHTML = cart.map(item => `
+                <div class="py-3 flex items-center justify-between gap-3">
+                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-lg">
+                    <div class="flex-grow">
+                        <h4 class="font-bold text-xs text-slate-800 line-clamp-1">${item.name}</h4>
+                        <div class="text-xs text-slate-500">৳${item.price} × ${item.qty}</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="updateCartQty('${item.id}', -1)" class="w-6 h-6 bg-slate-100 rounded-md hover:bg-slate-200 text-slate-700 flex items-center justify-center text-xs">-</button>
+                        <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
+                        <button onclick="updateCartQty('${item.id}', 1)" class="w-6 h-6 bg-slate-100 rounded-md hover:bg-slate-200 text-slate-700 flex items-center justify-center text-xs">+</button>
+                    </div>
+                </div>
+            `).join('');
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const delivery = subtotal > 0 ? 60 : 0;
+            const grandTotal = subtotal + delivery;
+
+            document.getElementById('cartSubtotal').innerText = `৳${subtotal}`;
+            document.getElementById('cartDelivery').innerText = `৳${delivery}`;
+            document.getElementById('cartGrandTotal').innerText = `৳${grandTotal}`;
+        }
+
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById('cartDrawer');
+            if (open) drawer.classList.remove('hidden');
+            else drawer.classList.add('hidden');
+        }
+
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            toggleCartDrawer(false);
+            if (currentUser) {
+                document.getElementById('checkoutName').value = currentUser.name || '';
+                document.getElementById('checkoutPhone').value = currentUser.phone || '';
+                document.getElementById('checkoutAddress').value = currentUser.address || '';
+            }
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function handlePlaceOrder(e) {
+            e.preventDefault();
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const delivery = 60;
+            const grandTotal = subtotal + delivery;
+
+            const newOrder = {
+                id: 'DM-' + Math.floor(100000 + Math.random() * 900000),
+                customerName: document.getElementById('checkoutName').value,
+                phone: document.getElementById('checkoutPhone').value,
+                address: document.getElementById('checkoutAddress').value,
+                paymentMethod: document.getElementById('checkoutPayment').value,
+                items: [...cart],
+                subtotal: subtotal,
+                deliveryCharge: delivery,
+                total: grandTotal,
+                status: 'Order Placed',
+                date: new Date().toLocaleString()
+            };
+
+            orders.unshift(newOrder);
+            cart = [];
+            saveData();
+            updateCartUI();
+            closeCheckoutModal();
+
+            alert(`Order Successfully Placed! Order ID: ${newOrder.id}`);
+            openOrderHistoryModal();
+        }
+
+        function openOrderHistoryModal() {
+            document.getElementById('orderHistoryModal').classList.remove('hidden');
+            const list = document.getElementById('customerOrderHistoryList');
+            
+            if (orders.length === 0) {
+                list.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">No past orders found.</div>`;
+                return;
+            }
+
+            const statuses = ['Order Placed', 'Processing', 'Out for Delivery', 'Delivered'];
+
+            list.innerHTML = orders.map(ord => {
+                const currentStatusIndex = statuses.indexOf(ord.status);
+                return `
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <div>
+                                <span class="font-bold text-sm text-brand-forest">${ord.id}</span>
+                                <span class="text-xs text-slate-400 block">${ord.date}</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-sm text-slate-900">৳${ord.total}</span>
+                                <span class="text-[10px] text-slate-500 block">${ord.paymentMethod}</span>
+                            </div>
+                        </div>
+                        <div class="text-xs text-slate-600">
+                            <strong>Items:</strong> ${ord.items.map(i => `${i.name} (x${i.qty})`).join(', ')}
+                        </div>
+                        <div class="pt-2">
+                            <div class="text-xs font-semibold text-slate-700 mb-2 flex items-center justify-between">
+                                <span>Delivery Status: <span class="text-brand-forest">${ord.status}</span></span>
+                            </div>
+                            <div class="grid grid-cols-4 gap-1 text-center text-[10px]">
+                                ${statuses.map((st, idx) => `
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-full h-2 rounded-full ${idx <= currentStatusIndex ? 'bg-brand-forest' : 'bg-slate-200'}"></div>
+                                        <span class="mt-1 ${idx <= currentStatusIndex ? 'font-bold text-slate-800' : 'text-slate-400'}">${st}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function closeOrderHistoryModal() {
+            document.getElementById('orderHistoryModal').classList.add('hidden');
+        }
+
+        // ================= AUTHENTICATION & PROFILE LOGIC =================
+        function openAuthModal() {
+            if (currentUser) {
+                openProfileModal();
+            } else {
+                document.getElementById('authModal').classList.remove('hidden');
+                switchAuthMode('login');
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function switchAuthMode(mode) {
+            const loginContainer = document.getElementById('loginFormContainer');
+            const signupContainer = document.getElementById('signupContainer');
+            const title = document.getElementById('authModalTitle');
+
+            if (mode === 'signup') {
+                loginContainer.classList.add('hidden');
+                signupContainer.classList.remove('hidden');
+                document.getElementById('signupStepEmail').classList.remove('hidden');
+                document.getElementById('signupStepOtp').classList.add('hidden');
+                title.innerHTML = `<i class="fa-solid fa-user-plus text-brand-forest"></i> Signup to Daily Mart`;
+            } else {
+                loginContainer.classList.remove('hidden');
+                signupContainer.classList.add('hidden');
+                title.innerHTML = `<i class="fa-solid fa-user-lock text-brand-forest"></i> Login to Daily Mart`;
+            }
+        }
+
+        // Send OTP Simulation
+        function sendOtp() {
+            const email = document.getElementById('signupEmailInput').value.trim();
+            if (!email) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            tempSignupEmail = email;
+            generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+            alert(`[OTP Simulation] Your OTP for Daily Mart is: ${generatedOtp}`);
+            
+            document.getElementById('signupStepEmail').classList.add('hidden');
+            document.getElementById('signupStepOtp').classList.remove('hidden');
+        }
+
+        // Verify OTP and Complete Registration
+        function verifyOtpAndRegister() {
+            const enteredOtp = document.getElementById('signupOtpInput').value.trim();
+            const password = document.getElementById('signupPasswordInput').value.trim();
+
+            if (enteredOtp !== generatedOtp) {
+                alert('Incorrect OTP! Please check and try again.');
+                return;
+            }
+            if (!password) {
+                alert('Please enter a password.');
+                return;
+            }
+
+            // Check if user already exists
+            const existing = usersDB.find(u => u.email === tempSignupEmail);
+            if (existing) {
+                alert('Email already registered. Please login.');
+                switchAuthMode('login');
+                return;
+            }
+
+            const newUser = {
+                name: tempSignupEmail.split('@')[0],
+                email: tempSignupEmail,
+                password: password,
+                phone: '',
+                address: '',
+                avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'
+            };
+
+            usersDB.push(newUser);
+            currentUser = newUser;
+            saveData();
+            updateAuthUI();
+            closeAuthModal();
+            alert('Account created & logged in successfully!');
+            openProfileModal(); // Allow user to fill profile details
+        }
+
+        // Handle Email/Password Login
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value.trim();
+
+            const user = usersDB.find(u => u.email === email && u.password === pass);
+            if (user) {
+                currentUser = user;
+                saveData();
+                updateAuthUI();
+                closeAuthModal();
+                alert('Successfully logged in!');
+            } else {
+                alert('Invalid email or password! If you are new, please sign up first.');
+            }
+        }
+
+        // Google Login Simulation
+        function handleGoogleLogin() {
+            currentUser = {
+                name: 'Dhrubo Saha',
+                email: 'dhrubosaha67@gmail.com',
+                password: 'google_auth_secure',
+                phone: '01407193581',
+                address: 'Gobindaganj, Gaibandha',
+                avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200'
+            };
+            if (!usersDB.some(u => u.email === currentUser.email)) {
+                usersDB.push(currentUser);
+            }
+            saveData();
+            updateAuthUI();
+            closeAuthModal();
+            alert('Successfully logged in with Google!');
+        }
+
+        function updateAuthUI() {
+            const authStatusHeader = document.getElementById('authStatusHeader');
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            const authNavBtn = document.getElementById('authNavBtn');
+            const authBtnText = document.getElementById('authBtnText');
+            const headerUserAvatar = document.getElementById('headerUserAvatar');
+
+            if (currentUser) {
+                authStatusHeader.classList.remove('hidden');
+                userNameDisplay.innerText = currentUser.name;
+                authBtnText.innerText = currentUser.name;
+                if (currentUser.avatar) headerUserAvatar.src = currentUser.avatar;
+            } else {
+                authStatusHeader.classList.add('hidden');
+                authBtnText.innerText = 'Login / Signup';
+            }
+        }
+
+        // Profile Modal Management
+        function openProfileModal() {
+            if (!currentUser) {
+                openAuthModal();
+                return;
+            }
+            document.getElementById('profileName').value = currentUser.name || '';
+            document.getElementById('profileEmail').value = currentUser.email || '';
+            document.getElementById('profilePhone').value = currentUser.phone || '';
+            document.getElementById('profileAddress').value = currentUser.address || '';
+            document.getElementById('profileAvatar').value = currentUser.avatar || '';
+            document.getElementById('profilePassword').value = '';
+            if (currentUser.avatar) document.getElementById('profileAvatarPreview').src = currentUser.avatar;
+            
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        function handleUpdateProfile(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            currentUser.name = document.getElementById('profileName').value;
+            currentUser.email = document.getElementById('profileEmail').value;
+            currentUser.phone = document.getElementById('profilePhone').value;
+            currentUser.address = document.getElementById('profileAddress').value;
+            currentUser.avatar = document.getElementById('profileAvatar').value || currentUser.avatar;
+            
+            const newPass = document.getElementById('profilePassword').value.trim();
+            if (newPass) {
+                currentUser.password = newPass;
+            }
+
+            // Update in usersDB
+            const idx = usersDB.findIndex(u => u.email === currentUser.email);
+            if (idx !== -1) {
+                usersDB[idx] = currentUser;
+            }
+
+            saveData();
+            updateAuthUI();
+            closeProfileModal();
+            alert('Profile updated successfully!');
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            saveData();
+            updateAuthUI();
+            closeProfileModal();
+            alert('Logged out successfully.');
+        }
+    </script>
+</body>
+</html>
