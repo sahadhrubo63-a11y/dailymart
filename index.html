@@ -46,26 +46,6 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #invoiceModalContent, #invoiceModalContent * {
-                visibility: visible;
-            }
-            #invoiceModalContent {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                margin: 0;
-                padding: 20px;
-                background: white;
-            }
-            .no-print {
-                display: none !important;
-            }
-        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
@@ -74,29 +54,24 @@
     <div class="bg-brand-dark text-brand-gold text-xs py-2 px-4 flex justify-between items-center border-b border-brand-forest">
         <div class="flex items-center gap-2 overflow-hidden whitespace-nowrap">
             <i class="fa-solid fa-bolt text-brand-gold animate-pulse"></i>
-            <span id="announcementText">Welcome to Daily Mart! Free delivery on orders over ৳500! Use code: DAILY10</span>
+            <span>Welcome to Daily Mart! Free delivery on orders over ৳500! Use code: DAILY10</span>
         </div>
-        <div class="flex items-center gap-4">
-            <button onclick="switchPortalMode()" id="portalSwitchBtn" class="bg-brand-gold text-brand-dark font-semibold px-3 py-1 rounded-full text-xs hover:bg-white transition shadow-sm flex items-center gap-1.5">
-                <i class="fa-solid fa-store"></i> <span id="portalSwitchText">Switch to Seller Portal</span>
-            </button>
-            <div id="authStatusHeader" class="hidden sm:flex items-center gap-2 text-white">
+        <div class="flex items-center gap-4 text-white">
+            <div id="authStatusHeader" class="hidden items-center gap-2">
                 <i class="fa-solid fa-user-circle text-brand-gold"></i>
                 <span id="userNameDisplay" class="font-medium">Guest</span>
             </div>
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- CUSTOMER STOREFRONT VIEW                    -->
-    <!-- ========================================== -->
-    <div id="customerPortal" class="flex flex-col flex-grow">
+    <!-- CUSTOMER STOREFRONT VIEW -->
+    <div class="flex flex-col flex-grow">
         <!-- Navigation Header -->
         <header class="sticky top-0 z-40 bg-brand-forest shadow-md text-white">
             <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
                 <!-- Logo -->
-                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
-                    <div class="w-10 h-10 rounded-full bg-brand-gold flex items-center justify-center text-brand-dark shadow-inner border-2 border-white">
+                <div class="flex items-center gap-3 cursor-pointer">
+                    <div class="w-10 h-10 rounded-full bg-brand-gold flex items-center justify-center text-brand-dark shadow-inner border-2 border-white font-bold">
                         <i class="fa-solid fa-cart-shopping text-lg"></i>
                     </div>
                     <div>
@@ -115,10 +90,10 @@
 
                 <!-- Actions -->
                 <div class="flex items-center gap-3">
-                    <button onclick="openAuthModal()" id="authNavBtn" class="hidden sm:flex items-center gap-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-2 rounded-lg transition border border-white/20">
+                    <button onclick="openAuthModal()" id="authNavBtn" class="flex items-center gap-2 text-xs bg-white/10 hover:bg-white/20 px-3 py-2 rounded-lg transition border border-white/20">
                         <i class="fa-solid fa-user"></i> <span id="authBtnText">Login / Signup</span>
                     </button>
-                    <button onclick="openOrderHistoryModal()" class="relative p-2 text-white hover:text-brand-gold transition" title="Order History">
+                    <button onclick="openOrderHistoryModal()" class="relative p-2 text-white hover:text-brand-gold transition" title="Order History & Status">
                         <i class="fa-solid fa-box-archive text-xl"></i>
                         <span id="orderHistoryBadge" class="absolute -top-1 -right-1 bg-brand-gold text-brand-dark text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center hidden">0</span>
                     </button>
@@ -154,12 +129,12 @@
         <!-- Main Store Content -->
         <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
             
-            <!-- Hero Offer Banner Carousel / View -->
+            <!-- Promotional Banner (Synced from Seller Portal) -->
             <div id="offerBannerContainer" class="mb-8">
                 <!-- Dynamically injected active offer banner -->
             </div>
 
-            <!-- Category Filter Pills / Quick View -->
+            <!-- Category Header -->
             <div class="flex items-center justify-between mb-6">
                 <h2 id="currentCategoryTitle" class="text-xl font-bold text-slate-900 flex items-center gap-2">
                     <i class="fa-solid fa-store text-brand-forest"></i> All Available Products
@@ -183,223 +158,7 @@
         </main>
     </div>
 
-
-    <!-- ========================================== -->
-    <!-- SELLER PORTAL VIEW                        -->
-    <!-- ========================================== -->
-    <div id="sellerPortal" class="hidden flex flex-col flex-grow bg-slate-100">
-        <!-- Seller Top Bar -->
-        <header class="bg-brand-dark text-white shadow-md">
-            <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-brand-gold flex items-center justify-center text-brand-dark font-bold">
-                        <i class="fa-solid fa-gauge text-lg"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-lg text-brand-gold">Daily Mart Seller Dashboard</h1>
-                        <p class="text-xs text-slate-300">Manage products, live orders & promotional offers</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="text-right hidden sm:block">
-                        <div class="text-xs text-slate-300">Logged in as</div>
-                        <div id="sellerNameDisplay" class="font-semibold text-brand-gold text-sm">Store Admin</div>
-                    </div>
-                    <button onclick="switchPortalMode()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-lg text-xs transition border border-white/20 flex items-center gap-1.5">
-                        <i class="fa-solid fa-arrow-left"></i> Back to Store
-                    </button>
-                </div>
-            </div>
-            <!-- Seller Tabs -->
-            <div class="bg-black/20 px-4 flex gap-4 text-sm border-t border-white/10 overflow-x-auto">
-                <button onclick="switchSellerTab('overview')" class="seller-tab py-3 border-b-2 border-brand-gold font-medium text-brand-gold whitespace-nowrap">
-                    <i class="fa-solid fa-chart-line mr-1.5"></i> Overview & Stats
-                </button>
-                <button onclick="switchSellerTab('products')" class="seller-tab py-3 border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap">
-                    <i class="fa-solid fa-boxes-stacked mr-1.5"></i> Product Manager
-                </button>
-                <button onclick="switchSellerTab('orders')" class="seller-tab py-3 border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap relative">
-                    <i class="fa-solid fa-clipboard-list mr-1.5"></i> Live Orders 
-                    <span id="sellerOrderBadge" class="ml-1.5 bg-red-500 text-white text-[10px] px-1.5 py-0.2 rounded-full hidden">0</span>
-                </button>
-                <button onclick="switchSellerTab('offers')" class="seller-tab py-3 border-b-2 border-transparent text-slate-300 hover:text-white whitespace-nowrap">
-                    <i class="fa-solid fa-bullhorn mr-1.5"></i> Promotional Offers
-                </button>
-            </div>
-        </header>
-
-        <!-- Seller Content Area -->
-        <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
-            
-            <!-- TAB 1: OVERVIEW -->
-            <div id="sellerTabOverview" class="space-y-6 animate-fade-in">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-medium text-slate-500 uppercase">Total Revenue</p>
-                            <h3 id="statTotalRevenue" class="text-2xl font-bold text-slate-900 mt-1">৳0</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-emerald-50 text-brand-forest rounded-full flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-bangladeshi-taka-sign"></i>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-medium text-slate-500 uppercase">Total Orders</p>
-                            <h3 id="statTotalOrders" class="text-2xl font-bold text-slate-900 mt-1">0</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-amber-50 text-brand-goldDark rounded-full flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-shopping-bag"></i>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-medium text-slate-500 uppercase">Active Products</p>
-                            <h3 id="statTotalProducts" class="text-2xl font-bold text-slate-900 mt-1">0</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-box"></i>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-medium text-slate-500 uppercase">Pending Deliveries</p>
-                            <h3 id="statPendingOrders" class="text-2xl font-bold text-slate-900 mt-1">0</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-truck-fast"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Action Card -->
-                <div class="bg-gradient-to-r from-brand-forest to-brand-dark rounded-2xl p-6 text-white shadow-md flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div>
-                        <h2 class="text-xl font-bold text-brand-gold">Ready to boost your Daily Mart sales?</h2>
-                        <p class="text-slate-200 text-sm mt-1">Upload products or publish promotional banners to instantly sync with the customer storefront.</p>
-                    </div>
-                    <div class="flex gap-3">
-                        <button onclick="switchSellerTab('products'); openAddProductModal();" class="bg-brand-gold text-brand-dark px-4 py-2.5 rounded-xl font-semibold hover:bg-amber-400 transition text-sm shadow">
-                            <i class="fa-solid fa-plus mr-1.5"></i> Add New Product
-                        </button>
-                        <button onclick="switchSellerTab('offers')" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl font-semibold transition text-sm border border-white/20">
-                            <i class="fa-solid fa-bullhorn mr-1.5"></i> Manage Offers
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 2: PRODUCTS MANAGER -->
-            <div id="sellerTabProducts" class="hidden space-y-6 animate-fade-in">
-                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <h2 class="font-bold text-lg text-slate-800">Inventory & Product Catalog</h2>
-                    <button onclick="openAddProductModal()" class="bg-brand-forest text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-brand-dark transition flex items-center gap-2 shadow">
-                        <i class="fa-solid fa-plus"></i> Upload Product
-                    </button>
-                </div>
-
-                <!-- Product Table -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                                    <th class="py-3 px-4">Product</th>
-                                    <th class="py-3 px-4">Category</th>
-                                    <th class="py-3 px-4">Price</th>
-                                    <th class="py-3 px-4">Weight / Unit</th>
-                                    <th class="py-3 px-4">Stock Qty</th>
-                                    <th class="py-3 px-4">Offer Tag</th>
-                                    <th class="py-3 px-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sellerProductTableBody" class="divide-y divide-slate-100 text-sm">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 3: LIVE ORDERS -->
-            <div id="sellerTabOrders" class="hidden space-y-6 animate-fade-in">
-                <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                    <h2 class="font-bold text-lg text-slate-800">Customer Orders & Invoice Manager</h2>
-                    <div class="text-sm text-slate-500">Auto-Generates Invoices with Daily Mart Branding</div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                                    <th class="py-3 px-4">Order ID</th>
-                                    <th class="py-3 px-4">Customer</th>
-                                    <th class="py-3 px-4">Items</th>
-                                    <th class="py-3 px-4">Total Amount</th>
-                                    <th class="py-3 px-4">Delivery Status</th>
-                                    <th class="py-3 px-4 text-right">Actions / Invoice</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sellerOrderTableBody" class="divide-y divide-slate-100 text-sm">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 4: OFFERS MANAGER -->
-            <div id="sellerTabOffers" class="hidden space-y-6 animate-fade-in">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h2 class="font-bold text-lg text-slate-800 mb-4">Publish Promotional Offer (Visible on Storefront)</h2>
-                    <form id="offerForm" onsubmit="handleSaveOffer(event)" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Offer Heading / Title</label>
-                                <input type="text" id="offerHeading" required placeholder="e.g. Mega Grocery Clearance Sale!" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Time / Validity</label>
-                                <input type="text" id="offerTime" required placeholder="e.g. Valid till 30 Nov 2026" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Offer Details / Description</label>
-                            <textarea id="offerDetails" rows="2" required placeholder="Describe discount percentage or promo codes..." class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest"></textarea>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Banner Image / Video URL</label>
-                                <input type="url" id="offerMedia" required placeholder="https://images.unsplash.com/photo-..." class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Terms & Conditions</label>
-                                <input type="text" id="offerTerms" required placeholder="e.g. Min purchase ৳500. Applicable on Groceries." class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
-                            </div>
-                        </div>
-                        <button type="submit" class="bg-brand-forest text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:bg-brand-dark transition shadow">
-                            <i class="fa-solid fa-bullhorn mr-2"></i> Publish Offer to Storefront
-                        </button>
-                    </form>
-                </div>
-
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h3 class="font-bold text-md text-slate-800 mb-3">Active Promotional Banners</h3>
-                    <div id="activeOffersList" class="space-y-3">
-                        <!-- Render active offers -->
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-
-    <!-- ========================================== -->
-    <!-- MODALS & DRAWERS                          -->
-    <!-- ========================================== -->
-
-    <!-- 1. CART SLIDER DRAWER -->
+    <!-- CART SLIDER DRAWER -->
     <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
         <div class="absolute inset-0 bg-black/50 transition-opacity" onclick="toggleCartDrawer(false)"></div>
         <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
@@ -440,7 +199,7 @@
         </div>
     </div>
 
-    <!-- 2. CHECKOUT MODAL -->
+    <!-- CHECKOUT MODAL -->
     <div id="checkoutModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl animate-fade-in max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 border-b pb-3">
@@ -478,7 +237,7 @@
         </div>
     </div>
 
-    <!-- 3. ORDER HISTORY MODAL -->
+    <!-- ORDER HISTORY & STATUS MODAL -->
     <div id="orderHistoryModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
         <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl animate-fade-in max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 border-b pb-3">
@@ -495,76 +254,7 @@
         </div>
     </div>
 
-    <!-- 4. ADD / EDIT PRODUCT MODAL (ADMIN) -->
-    <div id="addProductModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl animate-fade-in max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4 border-b pb-3">
-                <h3 id="productModalTitle" class="font-bold text-lg text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-box-open text-brand-forest"></i> Upload Product to Daily Mart
-                </h3>
-                <button onclick="closeAddProductModal()" class="text-slate-400 hover:text-slate-600">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            <form id="productForm" onsubmit="handleSaveProduct(event)" class="space-y-4">
-                <input type="hidden" id="editProductId">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Product Name</label>
-                    <input type="text" id="prodName" required placeholder="e.g. Fresh Organic Potatoes" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
-                        <select id="prodCategory" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
-                            <option value="Groceries">Groceries</option>
-                            <option value="Fruits & Veg">Fruits & Veg</option>
-                            <option value="Dairy & Eggs">Dairy & Eggs</option>
-                            <option value="Snacks">Snacks</option>
-                            <option value="Personal Care">Personal Care</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Price (৳)</label>
-                        <input type="number" id="prodPrice" required placeholder="120" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Weight / Quantity Unit</label>
-                        <input type="text" id="prodWeight" required placeholder="e.g. 1 kg / 500ml" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Stock Quantity</label>
-                        <input type="number" id="prodStock" required placeholder="50" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Picture / Video URL</label>
-                    <input type="url" id="prodImage" required placeholder="https://images.unsplash.com/photo-..." class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Special Offer / Tag (Optional)</label>
-                    <input type="text" id="prodOfferTag" placeholder="e.g. 10% OFF or Bestseller" class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Description</label>
-                    <textarea id="prodDescription" rows="2" placeholder="Write product details..." class="w-full border rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-brand-forest"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-brand-forest text-white py-3 rounded-xl font-bold hover:bg-brand-dark transition shadow">
-                    Save & Sync to Storefront
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- 5. INVOICE VIEW MODAL (PRINTABLE) -->
-    <div id="invoiceModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
-        <div id="invoiceModalContent" class="bg-white rounded-2xl max-w-xl w-full p-8 shadow-2xl animate-fade-in max-h-[90vh] overflow-y-auto">
-            <!-- Dynamic Invoice Header & Body -->
-        </div>
-    </div>
-
-    <!-- 6. AUTHENTICATION MODAL (GOOGLE LOGIN SIMULATION) -->
+    <!-- GOOGLE LOGIN MODAL -->
     <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl animate-fade-in text-center">
             <div class="w-14 h-14 bg-brand-forest text-brand-gold rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow">
@@ -593,8 +283,8 @@
                 <p class="text-xs text-slate-400">Your Daily Needs, Our Priority. Fast delivery right to your doorstep with 100% genuine quality assurance.</p>
             </div>
             <div class="text-center text-xs text-slate-400">
-                <p>&copy; 2026 Daily Mart E-Commerce & Seller Portal.</p>
-                <p class="mt-1">GitHub Powered Static Architecture.</p>
+                <p>&copy; 2026 Daily Mart E-Commerce Storefront.</p>
+                <p class="mt-1">GitHub Powered Realtime Sync Architecture.</p>
             </div>
             <div class="flex justify-center md:justify-end gap-4 text-brand-gold text-lg">
                 <i class="fa-brands fa-facebook hover:text-white cursor-pointer transition"></i>
@@ -605,11 +295,8 @@
         </div>
     </footer>
 
-    <!-- ========================================== -->
-    <!-- JAVASCRIPT LOGIC & STATE MANAGEMENT         -->
-    <!-- ========================================== -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Initial Mock Data Store
         const defaultProducts = [
             { id: 'p1', name: 'Fresh Organic Potatoes', category: 'Groceries', price: 65, weight: '1 kg', stock: 120, image: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500', offerTag: 'Best Seller', description: 'Fresh farm-picked organic potatoes rich in nutrients.' },
             { id: 'p2', name: 'Local Farm Red Onions', category: 'Groceries', price: 90, weight: '1 kg', stock: 85, image: 'https://images.unsplash.com/photo-1618512499648-ec0d62cf1303?w=500', offerTag: '10% OFF', description: 'Crisp and pungent red onions directly from local farms.' },
@@ -631,56 +318,37 @@
             }
         ];
 
-        // Global Application State
         let products = JSON.parse(localStorage.getItem('dailymart_products')) || defaultProducts;
         let offers = JSON.parse(localStorage.getItem('dailymart_offers')) || defaultOffers;
         let cart = JSON.parse(localStorage.getItem('dailymart_cart')) || [];
         let orders = JSON.parse(localStorage.getItem('dailymart_orders')) || [];
         let currentUser = JSON.parse(localStorage.getItem('dailymart_user')) || null;
         
-        let currentPortal = 'customer'; // 'customer' or 'seller'
         let selectedCategory = 'All';
         let searchQuery = '';
 
-        // Initialize App on Load
         window.addEventListener('DOMContentLoaded', () => {
             renderStorefront();
-            renderSellerDashboard();
             updateCartUI();
             updateAuthUI();
         });
 
-        // Save State to LocalStorage
+        // Listen for live updates from Seller Portal
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'dailymart_products' || e.key === 'dailymart_offers' || e.key === 'dailymart_orders') {
+                products = JSON.parse(localStorage.getItem('dailymart_products')) || defaultProducts;
+                offers = JSON.parse(localStorage.getItem('dailymart_offers')) || defaultOffers;
+                orders = JSON.parse(localStorage.getItem('dailymart_orders')) || orders;
+                renderStorefront();
+            }
+        });
+
         function saveData() {
-            localStorage.setItem('dailymart_products', JSON.stringify(products));
-            localStorage.setItem('dailymart_offers', JSON.stringify(offers));
             localStorage.setItem('dailymart_cart', JSON.stringify(cart));
             localStorage.setItem('dailymart_orders', JSON.stringify(orders));
             localStorage.setItem('dailymart_user', JSON.stringify(currentUser));
         }
 
-        // ========================================== -->
-        // PORTAL MODE SWITCHING                     -->
-        // ========================================== -->
-        function switchPortalMode() {
-            if (currentPortal === 'customer') {
-                currentPortal = 'seller';
-                document.getElementById('customerPortal').classList.add('hidden');
-                document.getElementById('sellerPortal').classList.remove('hidden');
-                document.getElementById('portalSwitchText').innerText = 'Switch to Storefront';
-                renderSellerDashboard();
-            } else {
-                currentPortal = 'customer';
-                document.getElementById('sellerPortal').classList.add('hidden');
-                document.getElementById('customerPortal').classList.remove('hidden');
-                document.getElementById('portalSwitchText').innerText = 'Switch to Seller Portal';
-                renderStorefront();
-            }
-        }
-
-        // ========================================== -->
-        // CUSTOMER STOREFRONT LOGIC                 -->
-        // ========================================== -->
         function filterCategory(category) {
             selectedCategory = category;
             document.querySelectorAll('.nav-tab').forEach(tab => {
@@ -701,7 +369,6 @@
         }
 
         function renderStorefront() {
-            // Render Active Offer Banner
             const bannerContainer = document.getElementById('offerBannerContainer');
             if (offers.length > 0) {
                 const latestOffer = offers[offers.length - 1];
@@ -726,7 +393,6 @@
                 bannerContainer.innerHTML = '';
             }
 
-            // Filter Products
             let filtered = products.filter(p => {
                 const matchesCat = selectedCategory === 'All' || p.category === selectedCategory;
                 const matchesSearch = p.name.toLowerCase().includes(searchQuery) || p.category.toLowerCase().includes(searchQuery);
@@ -757,528 +423,4 @@
                             <h3 class="font-bold text-slate-800 text-sm line-clamp-1">${p.name}</h3>
                             <p class="text-xs text-slate-500 line-clamp-1 mt-0.5">${p.description || ''}</p>
                         </div>
-                        <div class="mt-4 flex items-center justify-between">
-                            <div>
-                                <span class="text-sm font-extrabold text-slate-900">৳${p.price}</span>
-                                <span class="text-[10px] text-slate-400 block">Stock: ${p.stock}</span>
-                            </div>
-                            <button onclick="addToCart('${p.id}')" class="bg-brand-forest hover:bg-brand-dark text-white p-2.5 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1">
-                                <i class="fa-solid fa-cart-plus"></i> <span class="hidden sm:inline">Add</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // ========================================== -->
-        // CART & CHECKOUT MANAGEMENT                -->
-        // ========================================== -->
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-
-            const existingItem = cart.find(item => item.id === productId);
-            if (existingItem) {
-                if (existingItem.qty < product.stock) {
-                    existingItem.qty++;
-                } else {
-                    alert('Maximum available stock reached.');
-                    return;
-                }
-            } else {
-                cart.push({ ...product, qty: 1 });
-            }
-            saveData();
-            updateCartUI();
-            toggleCartDrawer(true);
-        }
-
-        function updateCartQty(productId, delta) {
-            const item = cart.find(i => i.id === productId);
-            if (!item) return;
-            item.qty += delta;
-            if (item.qty <= 0) {
-                cart = cart.filter(i => i.id !== productId);
-            }
-            saveData();
-            updateCartUI();
-        }
-
-        function updateCartUI() {
-            const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
-            document.getElementById('cartItemCount').innerText = totalCount;
-
-            const container = document.getElementById('cartDrawerItems');
-            if (cart.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12 text-slate-400">
-                        <i class="fa-solid fa-cart-shopping text-4xl mb-2"></i>
-                        <p class="text-sm">Your cart is empty.</p>
-                    </div>
-                `;
-                document.getElementById('cartSubtotal').innerText = '৳0';
-                document.getElementById('cartGrandTotal').innerText = '৳60';
-                return;
-            }
-
-            container.innerHTML = cart.map(item => `
-                py-3 flex items-center justify-between gap-3">
-                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-lg">
-                    <div class="flex-grow">
-                        <h4 class="font-bold text-xs text-slate-800 line-clamp-1">${item.name}</h4>
-                        <div class="text-xs text-slate-500">৳${item.price} × ${item.qty}</div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="updateCartQty('${item.id}', -1)" class="w-6 h-6 bg-slate-100 rounded-md hover:bg-slate-200 text-slate-700 flex items-center justify-center text-xs">-</button>
-                        <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
-                        <button onclick="updateCartQty('${item.id}', 1)" class="w-6 h-6 bg-slate-100 rounded-md hover:bg-slate-200 text-slate-700 flex items-center justify-center text-xs">+</button>
-                    </div>
-                </div>
-            `).join('');
-
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            const delivery = subtotal > 0 ? 60 : 0;
-            const grandTotal = subtotal + delivery;
-
-            document.getElementById('cartSubtotal').innerText = `৳${subtotal}`;
-            document.getElementById('cartDelivery').innerText = `৳${delivery}`;
-            document.getElementById('cartGrandTotal').innerText = `৳${grandTotal}`;
-        }
-
-        function toggleCartDrawer(open) {
-            const drawer = document.getElementById('cartDrawer');
-            if (open) drawer.classList.remove('hidden');
-            else drawer.classList.add('hidden');
-        }
-
-        function openCheckoutModal() {
-            if (cart.length === 0) {
-                alert('Your cart is empty!');
-                return;
-            }
-            toggleCartDrawer(false);
-            if (currentUser) {
-                document.getElementById('checkoutName').value = currentUser.name || '';
-                document.getElementById('checkoutPhone').value = currentUser.phone || '';
-            }
-            document.getElementById('checkoutModal').classList.remove('hidden');
-        }
-
-        function closeCheckoutModal() {
-            document.getElementById('checkoutModal').classList.add('hidden');
-        }
-
-        function handlePlaceOrder(e) {
-            e.preventDefault();
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            const delivery = 60;
-            const grandTotal = subtotal + delivery;
-
-            const newOrder = {
-                id: 'DM-' + Math.floor(100000 + Math.random() * 900000),
-                customerName: document.getElementById('checkoutName').value,
-                phone: document.getElementById('checkoutPhone').value,
-                address: document.getElementById('checkoutAddress').value,
-                paymentMethod: document.getElementById('checkoutPayment').value,
-                items: [...cart],
-                subtotal: subtotal,
-                deliveryCharge: delivery,
-                total: grandTotal,
-                status: 'Order Placed',
-                date: new Date().toLocaleString()
-            };
-
-            orders.unshift(newOrder);
-            cart = [];
-            saveData();
-            updateCartUI();
-            closeCheckoutModal();
-
-            alert(`Order Successfully Placed! Order ID: ${newOrder.id}`);
-            openOrderHistoryModal();
-            renderSellerDashboard();
-        }
-
-        // ========================================== -->
-        // ORDER HISTORY & STATUS                    -->
-        // ========================================== -->
-        function openOrderHistoryModal() {
-            document.getElementById('orderHistoryModal').classList.remove('hidden');
-            const list = document.getElementById('customerOrderHistoryList');
-            
-            if (orders.length === 0) {
-                list.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">No past orders found.</div>`;
-                return;
-            }
-
-            const statuses = ['Order Placed', 'Processing', 'Out for Delivery', 'Delivered'];
-
-            list.innerHTML = orders.map(ord => {
-                const currentStatusIndex = statuses.indexOf(ord.status);
-                return `
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
-                        <div class="flex justify-between items-center border-b pb-2">
-                            <div>
-                                <span class="font-bold text-sm text-brand-forest">${ord.id}</span>
-                                <span class="text-xs text-slate-400 block">${ord.date}</span>
-                            </div>
-                            <div class="text-right">
-                                <span class="font-bold text-sm text-slate-900">৳${ord.total}</span>
-                                <span class="text-[10px] text-slate-500 block">${ord.paymentMethod}</span>
-                            </div>
-                        </div>
-                        <div class="text-xs text-slate-600">
-                            <strong>Items:</strong> ${ord.items.map(i => `${i.name} (x${i.qty})`).join(', ')}
-                        </div>
-                        <!-- Status Progress Tracker -->
-                        <div class="pt-2">
-                            <div class="text-xs font-semibold text-slate-700 mb-2 flex items-center justify-between">
-                                <span>Delivery Status: <span class="text-brand-forest">${ord.status}</span></span>
-                            </div>
-                            <div class="grid grid-cols-4 gap-1 text-center text-[10px]">
-                                ${statuses.map((st, idx) => `
-                                    <div class="flex flex-col items-center">
-                                        <div class="w-full h-2 rounded-full ${idx <= currentStatusIndex ? 'bg-brand-forest' : 'bg-slate-200'}"></div>
-                                        <span class="mt-1 ${idx <= currentStatusIndex ? 'font-bold text-slate-800' : 'text-slate-400'}">${st}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function closeOrderHistoryModal() {
-            document.getElementById('orderHistoryModal').classList.add('hidden');
-        }
-
-        // ========================================== -->
-        // SELLER PORTAL MANAGEMENT                  -->
-        // ========================================== -->
-        function switchSellerTab(tab) {
-            document.querySelectorAll('.seller-tab').forEach(t => {
-                t.classList.remove('border-brand-gold', 'text-brand-gold', 'font-medium');
-                t.classList.add('border-transparent', 'text-slate-300');
-            });
-            event.currentTarget.classList.add('border-brand-gold', 'text-brand-gold', 'font-medium');
-            event.currentTarget.classList.remove('border-transparent', 'text-slate-300');
-
-            ['Overview', 'Products', 'Orders', 'Offers'].forEach(t => {
-                document.getElementById(`sellerTab${t}`).classList.add('hidden');
-            });
-            document.getElementById(`sellerTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.remove('hidden');
-        }
-
-        function renderSellerDashboard() {
-            // Stats
-            const totalRev = orders.reduce((sum, o) => sum + o.total, 0);
-            document.getElementById('statTotalRevenue').innerText = `৳${totalRev}`;
-            document.getElementById('statTotalOrders').innerText = orders.length;
-            document.getElementById('statTotalProducts').innerText = products.length;
-            document.getElementById('statPendingOrders').innerText = orders.filter(o => o.status !== 'Delivered').length;
-
-            const orderBadge = document.getElementById('sellerOrderBadge');
-            if (orders.length > 0) {
-                orderBadge.innerText = orders.length;
-                orderBadge.classList.remove('hidden');
-            } else {
-                orderBadge.classList.add('hidden');
-            }
-
-            // Products Table
-            const prodTable = document.getElementById('sellerProductTableBody');
-            prodTable.innerHTML = products.map(p => `
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="py-3 px-4 flex items-center gap-3">
-                        <img src="${p.image}" class="w-10 h-10 object-cover rounded-lg border">
-                        <div>
-                            <div class="font-bold text-slate-800">${p.name}</div>
-                            <div class="text-xs text-slate-400">ID: ${p.id}</div>
-                        </div>
-                    </td>
-                    <td class="py-3 px-4 text-slate-600">${p.category}</td>
-                    <td class="py-3 px-4 font-semibold text-slate-900">৳${p.price}</td>
-                    <td class="py-3 px-4 text-slate-600">${p.weight}</td>
-                    <td class="py-3 px-4 text-slate-600">${p.stock}</td>
-                    <td class="py-3 px-4"><span class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded">${p.offerTag || 'None'}</span></td>
-                    <td class="py-3 px-4 text-right space-x-2">
-                        <button onclick="editProduct('${p.id}')" class="text-blue-600 hover:text-blue-800 text-xs font-semibold"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deleteProduct('${p.id}')" class="text-red-600 hover:text-red-800 text-xs font-semibold"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-
-            // Orders Table
-            const ordTable = document.getElementById('sellerOrderTableBody');
-            ordTable.innerHTML = orders.length === 0 ? `<tr><td colspan="6" class="text-center py-8 text-slate-400">No customer orders received yet.</td></tr>` : 
-                orders.map(ord => `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="py-3 px-4 font-bold text-brand-forest">${ord.id}</td>
-                        <td class="py-3 px-4">
-                            <div class="font-semibold text-slate-800">${ord.customerName}</div>
-                            <div class="text-xs text-slate-400">${ord.phone}</div>
-                        </td>
-                        <td class="py-3 px-4 text-slate-600 text-xs">${ord.items.length} items</td>
-                        <td class="py-3 px-4 font-bold text-slate-900">৳${ord.total}</td>
-                        <td class="py-3 px-4">
-                            <select onchange="updateOrderStatus('${ord.id}', this.value)" class="text-xs border rounded p-1 bg-white font-medium text-brand-forest">
-                                <option value="Order Placed" ${ord.status === 'Order Placed' ? 'selected' : ''}>Order Placed</option>
-                                <option value="Processing" ${ord.status === 'Processing' ? 'selected' : ''}>Processing</option>
-                                <option value="Out for Delivery" ${ord.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
-                                <option value="Delivered" ${ord.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-                            </select>
-                        </td>
-                        <td class="py-3 px-4 text-right">
-                            <button onclick="viewInvoice('${ord.id}')" class="bg-brand-forest text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-brand-dark transition shadow">
-                                <i class="fa-solid fa-file-invoice mr-1"></i> Invoice
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
-
-            // Offers List
-            const offersList = document.getElementById('activeOffersList');
-            offersList.innerHTML = offers.map(o => `
-                <div class="border border-slate-200 rounded-xl p-4 flex items-center justify-between gap-4">
-                    <img src="${o.media}" class="w-16 h-12 object-cover rounded-lg border">
-                    <div class="flex-grow">
-                        <h4 class="font-bold text-sm text-slate-800">${o.heading}</h4>
-                        <p class="text-xs text-slate-500">${o.details}</p>
-                        <span class="text-[10px] text-brand-forest font-semibold">${o.time}</span>
-                    </div>
-                    <button onclick="deleteOffer('${o.id}')" class="text-red-500 hover:text-red-700 text-sm"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `).join('');
-        }
-
-        // Product CRUD
-        function openAddProductModal() {
-            document.getElementById('productModalTitle').innerHTML = `<i class="fa-solid fa-box-open text-brand-forest"></i> Upload Product to Daily Mart`;
-            document.getElementById('productForm').reset();
-            document.getElementById('editProductId').value = '';
-            document.getElementById('addProductModal').classList.remove('hidden');
-        }
-
-        function closeAddProductModal() {
-            document.getElementById('addProductModal').classList.add('hidden');
-        }
-
-        function handleSaveProduct(e) {
-            e.preventDefault();
-            const id = document.getElementById('editProductId').value;
-            const productData = {
-                id: id || 'DM-P-' + Math.floor(1000 + Math.random() * 9000),
-                name: document.getElementById('prodName').value,
-                category: document.getElementById('prodCategory').value,
-                price: parseFloat(document.getElementById('prodPrice').value),
-                weight: document.getElementById('prodWeight').value,
-                stock: parseInt(document.getElementById('prodStock').value),
-                image: document.getElementById('prodImage').value,
-                offerTag: document.getElementById('prodOfferTag').value,
-                description: document.getElementById('prodDescription').value
-            };
-
-            if (id) {
-                const index = products.findIndex(p => p.id === id);
-                if (index !== -1) products[index] = productData;
-            } else {
-                products.unshift(productData);
-            }
-
-            saveData();
-            closeAddProductModal();
-            renderStorefront();
-            renderSellerDashboard();
-            alert('Product successfully synced to Daily Mart Storefront!');
-        }
-
-        function editProduct(id) {
-            const p = products.find(prod => prod.id === id);
-            if (!p) return;
-            document.getElementById('productModalTitle').innerHTML = `<i class="fa-solid fa-pen text-brand-forest"></i> Edit Product`;
-            document.getElementById('editProductId').value = p.id;
-            document.getElementById('prodName').value = p.name;
-            document.getElementById('prodCategory').value = p.category;
-            document.getElementById('prodPrice').value = p.price;
-            document.getElementById('prodWeight').value = p.weight;
-            document.getElementById('prodStock').value = p.stock;
-            document.getElementById('prodImage').value = p.image;
-            document.getElementById('prodOfferTag').value = p.offerTag || '';
-            document.getElementById('prodDescription').value = p.description || '';
-            document.getElementById('addProductModal').classList.remove('hidden');
-        }
-
-        function deleteProduct(id) {
-            if (confirm('Are you sure you want to delete this product?')) {
-                products = products.filter(p => p.id !== id);
-                saveData();
-                renderStorefront();
-                renderSellerDashboard();
-            }
-        }
-
-        // Order Status Update
-        function updateOrderStatus(orderId, status) {
-            const ord = orders.find(o => o.id === orderId);
-            if (ord) {
-                ord.status = status;
-                saveData();
-                renderSellerDashboard();
-            }
-        }
-
-        // Automatic Invoice Generator
-        function viewInvoice(orderId) {
-            const ord = orders.find(o => o.id === orderId);
-            if (!ord) return;
-
-            const modalContent = document.getElementById('invoiceModalContent');
-            modalContent.innerHTML = `
-                <div class="flex justify-between items-start border-b pb-4 mb-4">
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <div class="w-8 h-8 rounded-full bg-brand-gold flex items-center justify-center text-brand-dark font-bold text-xs">
-                                <i class="fa-solid fa-cart-shopping"></i>
-                            </div>
-                            <h2 class="font-extrabold text-lg text-brand-forest">Daily Mart</h2>
-                        </div>
-                        <p class="text-[10px] text-slate-500">Your Daily Needs, Our Priority</p>
-                        <p class="text-[10px] text-slate-400">Gobindaganj, Gaibandha, Bangladesh</p>
-                    </div>
-                    <div class="text-right">
-                        <h3 class="font-bold text-sm text-slate-900">INVOICE</h3>
-                        <p class="text-xs text-brand-forest font-semibold">${ord.id}</p>
-                        <p class="text-[10px] text-slate-400">Date: ${ord.date}</p>
-                    </div>
-                </div>
-
-                <div class="mb-4 text-xs bg-slate-50 p-3 rounded-lg border">
-                    <strong class="text-slate-700">Customer Details:</strong>
-                    <div>Name: ${ord.customerName}</div>
-                    <div>Phone: ${ord.phone}</div>
-                    <div>Delivery Address: ${ord.address}</div>
-                    <div>Payment Method: ${ord.paymentMethod}</div>
-                </div>
-
-                <table class="w-full text-left text-xs mb-4 border-collapse">
-                    <thead>
-                        <tr class="bg-slate-100 border-b text-slate-600">
-                            <th class="p-2">Product Name</th>
-                            <th class="p-2">Weight/Unit</th>
-                            <th class="p-2 text-center">Qty</th>
-                            <th class="p-2 text-right">Price</th>
-                            <th class="p-2 text-right">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y">
-                        ${ord.items.map(item => `
-                            <tr>
-                                <td class="p-2 font-medium text-slate-800">${item.name}</td>
-                                <td class="p-2 text-slate-500">${item.weight}</td>
-                                <td class="p-2 text-center">${item.qty}</td>
-                                <td class="p-2 text-right">৳${item.price}</td>
-                                <td class="p-2 text-right font-semibold">৳${item.price * item.qty}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-
-                <div class="border-t pt-3 space-y-1 text-xs">
-                    <div class="flex justify-between text-slate-600">
-                        <span>Subtotal</span>
-                        <span>৳${ord.subtotal}</span>
-                    </div>
-                    <div class="flex justify-between text-slate-600">
-                        <span>Delivery Charges</span>
-                        <span>৳${ord.deliveryCharge}</span>
-                    </div>
-                    <div class="flex justify-between font-bold text-sm text-slate-900 border-t pt-2">
-                        <span>Grand Total</span>
-                        <span>৳${ord.total}</span>
-                    </div>
-                </div>
-
-                <div class="mt-8 flex gap-3 no-print">
-                    <button onclick="window.print()" class="flex-grow bg-brand-forest text-white py-2.5 rounded-xl font-bold text-xs hover:bg-brand-dark transition shadow">
-                        <i class="fa-solid fa-print mr-1"></i> Print Invoice
-                    </button>
-                    <button onclick="closeInvoiceModal()" class="bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-xs hover:bg-slate-300 transition">
-                        Close
-                    </button>
-                </div>
-            `;
-            document.getElementById('invoiceModal').classList.remove('hidden');
-        }
-
-        function closeInvoiceModal() {
-            document.getElementById('invoiceModal').classList.add('hidden');
-        }
-
-        // Promotional Offer Manager
-        function handleSaveOffer(e) {
-            e.preventDefault();
-            const newOffer = {
-                id: 'OFF-' + Math.floor(1000 + Math.random() * 9000),
-                heading: document.getElementById('offerHeading').value,
-                time: document.getElementById('offerTime').value,
-                details: document.getElementById('offerDetails').value,
-                media: document.getElementById('offerMedia').value,
-                terms: document.getElementById('offerTerms').value
-            };
-            offers.push(newOffer);
-            saveData();
-            document.getElementById('offerForm').reset();
-            renderStorefront();
-            renderSellerDashboard();
-            alert('Offer published successfully and synced to Daily Mart storefront banner!');
-        }
-
-        function deleteOffer(id) {
-            offers = offers.filter(o => o.id !== id);
-            saveData();
-            renderStorefront();
-            renderSellerDashboard();
-        }
-
-        // ========================================== -->
-        // AUTHENTICATION (GOOGLE LOGIN SIMULATION)  -->
-        // ========================================== -->
-        function openAuthModal() {
-            document.getElementById('authModal').classList.remove('hidden');
-        }
-
-        function simulateGoogleLogin() {
-            currentUser = {
-                name: 'Dhrubo Saha',
-                email: 'dhrubosaha67@gmail.com',
-                phone: '01407193581'
-            };
-            saveData();
-            updateAuthUI();
-            document.getElementById('authModal').classList.add('hidden');
-            alert('Successfully logged in with Google!');
-        }
-
-        function updateAuthUI() {
-            const authStatusHeader = document.getElementById('authStatusHeader');
-            const userNameDisplay = document.getElementById('userNameDisplay');
-            const authNavBtn = document.getElementById('authNavBtn');
-            const authBtnText = document.getElementById('authBtnText');
-            const sellerNameDisplay = document.getElementById('sellerNameDisplay');
-
-            if (currentUser) {
-                authStatusHeader.classList.remove('hidden');
-                userNameDisplay.innerText = currentUser.name;
-                sellerNameDisplay.innerText = currentUser.name;
-                authBtnText.innerText = currentUser.name;
-            } else {
-                authStatusHeader.classList.add('hidden');
-                authBtnText.innerText = 'Login / Signup';
-                sellerNameDisplay.innerText = 'Store Admin';
-            }
-        }
-    </script>
-</body>
-</html>
+                        <div class="mt-4 flex items
